@@ -29,7 +29,7 @@ jobs:
     - name: Build and push root image
       run: |
         docker build -f Dockerfile -t $ACR_NAME/openrmscore-backend:latest .
-        docker push $ACR_NAME/openrmscore-root:latest
+        docker push $ACR_NAME/openrmscore-backend:latest
 
     - name: Build and push frontend image
       run: |
