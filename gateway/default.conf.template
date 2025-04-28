@@ -75,6 +75,12 @@ server {
   # all redirects are relative to the gateway
   absolute_redirect off;
 
+  location /healthz {
+    access_log off;
+    return 200 'OK';
+    add_header Content-Type text/plain;
+  }
+  
   location = /openmrs/spa {
     return 301 /openmrs/spa/;
   }
