@@ -20,7 +20,7 @@ map $forwarded_proto $var_proxy_cookie_flags {
 }
 
 upstream frontend {
-  server 127.0.0.1:80;
+  server 127.0.0.1:3000;
 }
 
 upstream backend {
