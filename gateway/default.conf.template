@@ -20,11 +20,11 @@ map $forwarded_proto $var_proxy_cookie_flags {
 }
 
 upstream frontend {
-  server 127.0.0.1:80 max_fails=0;
+  server frontend:3000 max_fails=0;
 }
 
 upstream backend {
-  server 127.0.0.1:8080 max_fails=0;
+  server backend:8080 max_fails=0;
 }
 
 server {
