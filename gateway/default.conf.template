@@ -20,11 +20,11 @@ map $forwarded_proto $var_proxy_cookie_flags {
 }
 
 upstream frontend {
-  server frontend:3000 max_fails=0;
+  server openrmscore-dev-app-frontend max_fails=0;
 }
 
 upstream backend {
-  server backend:8080 max_fails=0;
+  server openrmscore-dev-app-backend:8080 max_fails=0;
 }
 
 server {
