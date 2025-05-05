@@ -19,14 +19,6 @@ map $forwarded_proto $var_proxy_cookie_flags {
   default "off";
 }
 
-upstream frontend {
-  server ${FRONTEND_URL} max_fails=0;
-}
-
-upstream backend {
-  server ${BACKEND_URL} max_fails=0;
-}
-
 server {
   listen       80;
 
@@ -75,20 +67,21 @@ server {
   # all redirects are relative to the gateway
   absolute_redirect off;
 
-  location = /openmrs/spa {
-    return 301 /openmrs/spa/;
-  }
-
-  location /openmrs/spa/ {
-    proxy_pass http://frontend/;
-    proxy_redirect http://$host/ /openmrs/spa/;
-  }
-
-  location /openmrs {
-    proxy_pass http://backend;
-  }
-
-  location = / {
-    return 301 /openmrs/spa/;
+  location = /openmrs/spa {                                                                                                               
+  return 301 /openmrs/spa/;
+  }                                                                                                                                       
+                                                                                                                                        
+location /openmrs/spa/ {                                                                                                                
+  proxy_pass http://openrmscore-dev-app-frontend.internal.wonderfulmoss-888a38c9.francecentral.azurecontainerapps.io;                   
+  proxy_set_header Host openrmscore-dev-app-frontend.internal.wonderfulmoss-888a38c9.francecentral.azurecontainerapps.io;               
+  proxy_redirect http://openrmscore-dev-app-frontend.internal.wonderfulmoss-888a38c9.francecentral.azurecontainerapps.io/ /openmrs/spa/;
+  }                                                                                                                   
+                                                                                                                    
+location /openmrs {                                                                                                 
+  proxy_pass http://openrmscore-dev-app-backend.internal.wonderfulmoss-888a38c9.francecentral.azurecontainerapps.io;
+  }                          
+                                              
+location = / {                                   
+  return 301 /openmrs/spa/;
   }
 }
