@@ -71,19 +71,19 @@ return 301 /openmrs/spa/;
   }                                                                                                                                         
                                                                                                                                           
 location /openmrs/ws/rest/v1/ {                                                                                                           
-    proxy_pass http://openrmscore-dev-app-backend.internal.orangeriver-f7d79d0e.francecentral.azurecontainerapps.io/openmrs/ws/rest/v1/;
+    proxy_pass http://openrmscore-dev-app-backend.internal.wonderfuldune-5eae0b6d.francecentral.azurecontainerapps.io/openmrs/ws/rest/v1/;
     proxy_set_header Host $host;                                                                                                      
     proxy_set_header X-Forwarded-Proto $scheme;
   }                                                                                                                                     
                                                                                                                                       
 location /openmrs {                                                                                                                   
-proxy_pass http://openrmscore-dev-app-backend.internal.orangeriver-f7d79d0e.francecentral.azurecontainerapps.io;                    
+proxy_pass http://openrmscore-dev-app-backend.internal.wonderfuldune-5eae0b6d.francecentral.azurecontainerapps.io;                    
   }                                                                                                                                     
                                                                                                                                       
 location /openmrs/spa/ {                                                                                                              
-proxy_pass http://openrmscore-dev-app-frontend.internal.orangeriver-f7d79d0e.francecentral.azurecontainerapps.io/;                  
-proxy_set_header Host openrmscore-dev-app-frontend.internal.orangeriver-f7d79d0e.francecentral.azurecontainerapps.io;               
-proxy_redirect http://openrmscore-dev-app-frontend.internal.orangeriver-f7d79d0e.francecentral.azurecontainerapps.io/ /openmrs/spa/;
+proxy_pass http://openrmscore-dev-app-frontend.internal.wonderfuldune-5eae0b6d.francecentral.azurecontainerapps.io/;                  
+proxy_set_header Host openrmscore-dev-app-frontend.internal.wonderfuldune-5eae0b6d.francecentral.azurecontainerapps.io;               
+proxy_redirect http://openrmscore-dev-app-frontend.internal.wonderfuldune-5eae0b6d.francecentral.azurecontainerapps.io/ /openmrs/spa/;
   }                                                
                                             
 location = / {           
