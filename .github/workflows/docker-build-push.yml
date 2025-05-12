@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  ACR_NAME: openrmscoredevacr.azurecr.io
+  ACR_NAME: openmrs-dev-audioprothese-acr.azurecr.io
 
 jobs:
   build-and-push:
