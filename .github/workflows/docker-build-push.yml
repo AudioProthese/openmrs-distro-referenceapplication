@@ -30,14 +30,14 @@ jobs:
       - name: Build and push root image
         run: |
           docker build -f Dockerfile -t $ACR_NAME/openmrscore-backend:latest .
-          docker push $ACR_NAME/openrmscore-backend:latest
+          docker push $ACR_NAME/openmrscore-backend:latest
 
       - name: Build and push frontend image
         run: |
           docker build -f frontend/Dockerfile -t $ACR_NAME/openmrscore-frontend:latest ./frontend
-          docker push $ACR_NAME/openrmscore-frontend:latest
+          docker push $ACR_NAME/openmrscore-frontend:latest
 
       - name: Build and push gateway image
         run: |
           docker build -f gateway/Dockerfile -t $ACR_NAME/openmrscore-gateway:latest ./gateway
-          docker push $ACR_NAME/openrmscore-gateway:latest
+          docker push $ACR_NAME/openmrscore-gateway:latest
