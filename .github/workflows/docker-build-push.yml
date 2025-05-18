@@ -1,4 +1,4 @@
-name: Build and Push Docker Image to Azure Container Registry
+name: Build and Push All Docker Images to Azure Container Registry
 
 on:
   push:
@@ -10,34 +10,113 @@ env:
   ACR_NAME: openmrsdevacr.azurecr.io
 
 jobs:
-  build-and-push:
+  login:
+    name: Azure & ACR Login
     runs-on: ubuntu-latest
-    environment: dev
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
+      - uses: actions/checkout@v4
       - name: Azure Login
         uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
-
       - name: ACR Login
         run: |
           az acr login --name ${{ env.ACR_NAME }}
 
-      - name: Build and push root image
-        run: |
-          docker build -f Dockerfile -t $ACR_NAME/openmrscore-backend:latest .
-          docker push $ACR_NAME/openmrscore-backend:latest
+  build-root:
+    name: Build & Scan Root Image
+    needs: login
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
 
-      - name: Build and push frontend image
-        run: |
-          docker build -f frontend/Dockerfile -t $ACR_NAME/openmrscore-frontend:latest ./frontend
-          docker push $ACR_NAME/openmrscore-frontend:latest
+      - uses: actions/cache@v4
+        with:
+          path: /tmp/.buildx-cache
+          key: buildx-root-${{ github.sha }}
+          restore-keys: |
+            buildx-root-
 
-      - name: Build and push gateway image
+      - name: Build and Push Root Image
         run: |
-          docker build -f gateway/Dockerfile -t $ACR_NAME/openmrscore-gateway:latest ./gateway
-          docker push $ACR_NAME/openmrscore-gateway:latest
+          docker buildx build --push \
+            --tag $ACR_NAME/openmrscore-backend:latest \
+            --cache-from type=local,src=/tmp/.buildx-cache \
+            --cache-to type=local,dest=/tmp/.buildx-cache-new \
+            -f Dockerfile .
+
+      - name: Move new cache
+        run: |
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+
+      - name: Trivy Scan (HTML)
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ env.ACR_NAME }}/openmrscore-backend:latest
+          format: 'template'
+          template: '@/contrib/html.tpl'
+          output: 'trivy-backend-report.html'
+
+      - name: Upload Trivy Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-backend-report
+          path: trivy-backend-report.html
+
+  build-frontend:
+    name: Build & Scan Frontend Image
+    needs: login
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Build and Push Frontend Image
+        run: |
+          docker buildx build --push \
+            --tag $ACR_NAME/openmrscore-frontend:latest \
+            -f frontend/Dockerfile ./frontend
+
+      - name: Trivy Scan (HTML)
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ env.ACR_NAME }}/openmrscore-frontend:latest
+          format: 'template'
+          template: '@/contrib/html.tpl'
+          output: 'trivy-frontend-report.html'
+
+      - name: Upload Trivy Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-frontend-report
+          path: trivy-frontend-report.html
+
+  build-gateway:
+    name: Build & Scan Gateway Image
+    needs: login
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Build and Push Gateway Image
+        run: |
+          docker buildx build --push \
+            --tag $ACR_NAME/openmrscore-gateway:latest \
+            -f gateway/Dockerfile ./gateway
+
+      - name: Trivy Scan (HTML)
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ env.ACR_NAME }}/openmrscore-gateway:latest
+          format: 'template'
+          template: '@/contrib/html.tpl'
+          output: 'trivy-gateway-report.html'
+
+      - name: Upload Trivy Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-gateway-report
+          path: trivy-gateway-report.html
