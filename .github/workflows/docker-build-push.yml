@@ -13,6 +13,7 @@ jobs:
   login:
     name: Azure & ACR Login
     runs-on: ubuntu-latest
+    environment: dev
     steps:
       - uses: actions/checkout@v4
       - name: Azure Login
