@@ -1,10 +1,14 @@
-name: Build and Push All Docker Images to Azure Container Registry
+name: Build and Push All Docker Images to ACR
 
 on:
   push:
     branches:
       - main
   workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
 
 env:
   ACR_NAME: openmrsdevacr.azurecr.io
@@ -14,11 +18,6 @@ jobs:
     name: Azure & ACR Login
     runs-on: ubuntu-latest
     environment: dev
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      ARM_USE_OIDC: true
-      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
 
     steps:
       - uses: actions/checkout@v4
