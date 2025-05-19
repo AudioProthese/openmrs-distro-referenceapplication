@@ -14,12 +14,22 @@ jobs:
     name: Azure & ACR Login
     runs-on: ubuntu-latest
     environment: dev
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      ARM_USE_OIDC: true
+      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+
     steps:
       - uses: actions/checkout@v4
-      - name: Azure Login
+
+      - name: Configure Azure Credentials
         uses: azure/login@v2
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      
       - name: ACR Login
         run: |
           az acr login --name ${{ env.ACR_NAME }}
