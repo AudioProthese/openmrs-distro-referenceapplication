@@ -11,7 +11,7 @@ permissions:
   contents: read
 
 env:
-  ACR_NAME: openmrsdevacr.azurecr.io
+  ACR_NAME: openmrsacrdev.azurecr.io
 
 jobs:
   login:
@@ -28,7 +28,7 @@ jobs:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-      
+
       - name: ACR Login
         run: |
           az acr login --name ${{ env.ACR_NAME }}
@@ -65,9 +65,9 @@ jobs:
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: ${{ env.ACR_NAME }}/openmrscore-backend:latest
-          format: 'template'
-          template: '@/contrib/html.tpl'
-          output: 'trivy-backend-report.html'
+          format: "template"
+          template: "@/contrib/html.tpl"
+          output: "trivy-backend-report.html"
 
       - name: Upload Trivy Report
         uses: actions/upload-artifact@v4
@@ -93,9 +93,9 @@ jobs:
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: ${{ env.ACR_NAME }}/openmrscore-frontend:latest
-          format: 'template'
-          template: '@/contrib/html.tpl'
-          output: 'trivy-frontend-report.html'
+          format: "template"
+          template: "@/contrib/html.tpl"
+          output: "trivy-frontend-report.html"
 
       - name: Upload Trivy Report
         uses: actions/upload-artifact@v4
@@ -121,9 +121,9 @@ jobs:
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: ${{ env.ACR_NAME }}/openmrscore-gateway:latest
-          format: 'template'
-          template: '@/contrib/html.tpl'
-          output: 'trivy-gateway-report.html'
+          format: "template"
+          template: "@/contrib/html.tpl"
+          output: "trivy-gateway-report.html"
 
       - name: Upload Trivy Report
         uses: actions/upload-artifact@v4
